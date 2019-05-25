@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "*": [
+        "types/*"
+      ]
+    },
+    "module": "commonjs",
+    "target": "es2018",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "declaration": true,
+    "strictNullChecks": false,
+    "noUnusedLocals": false,
+    "pretty": true,
+    "outDir": "./build",
+    "baseUrl": "./app"
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/config/config.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
