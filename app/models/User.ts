@@ -5,9 +5,9 @@ import {
   Column,
   DataType,
   Default,
-  DefaultScope,
+  HasMany,
   Model,
-  PrimaryKey,
+  PrimaryKey, Scopes,
   Table,
   Unique,
 } from 'sequelize-typescript';
@@ -22,13 +22,15 @@ import List from './List';
   timestamps: false,
   underscored: true,
 })
-@DefaultScope(() => ({
-  attributes: {
-    exclude: [
-      'salt',
-      'hash',
-      'email',
-    ],
+@Scopes(() => ({
+  default: {
+    attributes: {
+      exclude: [
+        'salt',
+        'hash',
+        'email',
+      ],
+    },
   },
 }))
 export default class User extends Model<User> {
@@ -83,4 +85,7 @@ export default class User extends Model<User> {
 
   @BelongsToMany(() => List, () => UserList)
   lists: List[];
+
+  @HasMany(() => TaskExecutor)
+  te: TaskExecutor[];
 }

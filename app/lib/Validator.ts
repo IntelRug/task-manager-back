@@ -159,6 +159,46 @@ const validators = {
       .isNumeric()
       .withMessage('Task id must be numeric'),
   ],
+  listGetOne: [
+    param('listId')
+      .isNumeric()
+      .withMessage('List id must be numeric'),
+  ],
+  listGetMany: [
+    query('ids')
+      .optional()
+      .not().isEmpty()
+      .isString()
+      .withMessage('ids must be string'),
+  ],
+  listCreate: [
+    body('name')
+      .trim()
+      .not().isEmpty()
+      .withMessage('List name can not be empty'),
+    body('description')
+      .optional()
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage('List description can not be empty'),
+  ],
+  listDelete: [
+    param('listId')
+      .isNumeric()
+      .withMessage('List id must be numeric'),
+  ],
+  listEdit: [
+    param('listId')
+      .isNumeric()
+      .withMessage('List id must be numeric'),
+    body('name')
+      .optional()
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage('List name can not be empty'),
+  ],
 };
 
 export default validators;

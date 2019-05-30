@@ -7,7 +7,7 @@ export default class OrganizationController {
   public static get(req: Request, res: Response) {
     const options: FindOptions = {
       include: [{
-        model: User,
+        model: User.scope('default'),
         attributes: [
           'id',
           'username',

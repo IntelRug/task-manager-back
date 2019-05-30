@@ -8,26 +8,26 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import Task from './Task';
+import List from './List';
 import User from './User';
 
 @Table({
   timestamps: false,
   underscored: true,
 })
-export default class TaskExecutor extends Model<TaskExecutor> {
+export default class UserList extends Model<UserList> {
   @PrimaryKey
   @AutoIncrement
-  @Column
+  @Column(DataType.INTEGER.UNSIGNED)
   id: number;
 
   @AllowNull(false)
-  @ForeignKey(() => Task)
-  @Column(DataType.BIGINT.UNSIGNED)
-  task_id: number;
+  @ForeignKey(() => List)
+  @Column(DataType.INTEGER.UNSIGNED)
+  list_id: number;
 
   @AllowNull(false)
   @ForeignKey(() => User)
   @Column(DataType.INTEGER.UNSIGNED)
-  executor_id: number;
+  user_id: number;
 }
