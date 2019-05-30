@@ -199,6 +199,18 @@ const validators = {
       .isEmpty()
       .withMessage('List name can not be empty'),
   ],
+  userGetOne: [
+    param('userId')
+      .isNumeric()
+      .withMessage('User id must be numeric'),
+  ],
+  userGetMany: [
+    query('ids')
+      .optional()
+      .not().isEmpty()
+      .isString()
+      .withMessage('ids must be string'),
+  ],
 };
 
 export default validators;

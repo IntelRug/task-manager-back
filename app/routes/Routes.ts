@@ -16,6 +16,12 @@ export default class Routes {
     app.route(`${secure}/*`)
       .all(passport.authenticate('bearer', { session: false }));
 
+    app.route(`${secure}/users`)
+      .get(Validator.userGetMany, User.getMany);
+
+    app.route(`${secure}/users/:userId`)
+      .get(Validator.userGetOne, User.getOne);
+
     app.route(`${secure}/lists`)
       .get(Validator.listGetMany, List.getMany)
       .post(Validator.listCreate, List.create);

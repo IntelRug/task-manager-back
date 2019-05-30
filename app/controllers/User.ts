@@ -1,39 +1,39 @@
 import { Request, Response } from 'express';
 import { FindOptions, Op } from 'sequelize';
 import AuthService from '../lib/AuthService';
-import Organization from '../models/Organization';
 import User from '../models/User';
-import Task from '../models/Task';
 import validate from '../lib/ValidateDecorator';
 import ErrorHelper from '../lib/ErrorHelper';
+import { optArr } from '../lib/DbHelper';
 
 export default class UserController {
-  public static get(req: Request, res: Response) {
+  public static async getOne(req, res) {
+    try {
+      const user = await User
+        .scope('default')
+        .findByPk(req.params.userId);
+
+      res.send({ user });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  public static async getMany(req, res) {
     const options: FindOptions = {
-      include: [
-        {
-          model: Organization,
-          through: {
-            attributes: [],
-          },
-        },
-        {
-          model: Task,
-          through: {
-            attributes: [],
-          },
-        },
-      ],
       where: {
-        id: req.params.id,
+        id: optArr(req.query.ids),
       },
     };
+    try {
+      const { count, rows: users } = await User
+        .scope('default')
+        .findAndCountAll(options);
 
-    User
-      .findOne(options)
-      .then(user => {
-        res.status(200).send({ user });
-      });
+      res.send({ count, users });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @validate
