@@ -133,7 +133,6 @@ const validators = {
       .isNumeric()
       .withMessage('Task id must be numeric'),
     body('user_ids')
-      .not().isEmpty()
       .isString()
       .withMessage('user_ids must be string'),
   ],

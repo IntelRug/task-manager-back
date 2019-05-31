@@ -29,9 +29,6 @@ export default class TaskController {
         model: User.scope('default'),
         through: {
           attributes: [],
-          where: {
-            executor_id: req.user.id,
-          },
         },
       }],
     };
@@ -53,6 +50,8 @@ export default class TaskController {
         name: req.body.name,
         description: req.body.description,
         owner_id: req.user.id,
+        status: req.body.status,
+        important: req.body.important,
         list_id: listId,
         created_at: Date.now(),
       }).save();
@@ -80,9 +79,11 @@ export default class TaskController {
       const task = await Task.isAllowedToEdit(req.params.taskId, req.user.id);
       task.name = req.body.name ? req.body.name : task.name;
       task.description = req.body.description ? req.body.description : task.description;
-      task.status = req.body.status ? req.body.status : task.status;
+      task.status = Object.prototype.hasOwnProperty.call(req.body, 'status')
+        ? req.body.status : task.status;
       task.deadline_at = req.body.deadline_at ? req.body.deadline_at : task.deadline_at;
-      task.important = req.body.important ? req.body.important : task.important;
+      task.important = Object.prototype.hasOwnProperty.call(req.body, 'important')
+        ? req.body.important : task.important;
       task.finished_at = !task.finished_at && task.status === 3 ? Date.now() : task.finished_at;
       task.finished_by = !task.finished_by && task.status === 3 ? req.user.id : task.finished_by;
       task.updated_at = Date.now();
