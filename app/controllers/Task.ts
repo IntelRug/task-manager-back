@@ -84,6 +84,7 @@ export default class TaskController {
       task.deadline_at = req.body.deadline_at ? req.body.deadline_at : task.deadline_at;
       task.important = Object.prototype.hasOwnProperty.call(req.body, 'important')
         ? req.body.important : task.important;
+      task.list_id = req.body.list_id ? req.body.list_id : task.list_id;
       task.finished_at = !task.finished_at && task.status === 3 ? Date.now() : task.finished_at;
       task.finished_by = !task.finished_by && task.status === 3 ? req.user.id : task.finished_by;
       task.updated_at = Date.now();
