@@ -2,7 +2,7 @@ import {
   AllowNull,
   AutoIncrement,
   Column,
-  DataType,
+  DataType, Default,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -30,4 +30,11 @@ export default class UserList extends Model<UserList> {
   @ForeignKey(() => User)
   @Column(DataType.INTEGER.UNSIGNED)
   user_id: number;
+
+  @AllowNull(false)
+  @Default(0)
+  @Column(DataType.TINYINT({
+    length: 1,
+  }).UNSIGNED)
+  default: number;
 }

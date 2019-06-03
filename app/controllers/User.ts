@@ -5,6 +5,7 @@ import User from '../models/User';
 import validate from '../lib/ValidateDecorator';
 import ErrorHelper from '../lib/ErrorHelper';
 import { optArr } from '../lib/DbHelper';
+import List from '../models/List';
 
 export default class UserController {
   public static async getOne(req, res) {
@@ -51,7 +52,7 @@ export default class UserController {
 
       if (existingUser) return res.status(400).send({ code: 28, message: 'User already exist' });
 
-      const user: User = new User();
+      let user: User = new User();
 
       const { salt, hash } = await AuthService.createSaltHash(req.body.password);
 
@@ -63,7 +64,9 @@ export default class UserController {
       user.hash = hash;
       user.created_at = Date.now();
 
-      await user.save();
+      user = await user.save();
+      user = await User.scope('default').findByPk(user.id);
+      await List.createDefaultList(user.id);
       return res.send({ user });
     } catch (e) {
       return ErrorHelper.api(res, e);

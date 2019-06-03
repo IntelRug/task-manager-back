@@ -2,6 +2,8 @@ import { FindOptions } from 'sequelize';
 import validate from '../lib/ValidateDecorator';
 import ErrorHelper from '../lib/ErrorHelper';
 import List from '../models/List';
+import UserList from '../models/UserList';
+import { optArr } from '../lib/DbHelper';
 
 export default class ListController {
   @validate
@@ -19,17 +21,13 @@ export default class ListController {
   public static async getMany(req, res) {
     const options: FindOptions = {
       where: {
-        owner_id: req.user.id,
+        id: optArr(req.query.ids),
       },
     };
 
-    if (req.query.ids) {
-      Object.defineProperty(options.where, 'id', req.query.ids.split(','));
-    }
-
     try {
-      const { count, rows } = await List.scope('default').findAndCountAll(options);
-      res.send({ count, lists: rows });
+      const lists = await List.getAvailableLists(req.user.id, options);
+      res.send({ lists });
     } catch (e) {
       ErrorHelper.api(res, e);
     }
@@ -42,6 +40,10 @@ export default class ListController {
         name: req.body.name,
         owner_id: req.user.id,
         created_at: Date.now(),
+      }).save();
+      await new UserList({
+        list_id: list.id,
+        user_id: req.user.id,
       }).save();
       list = await List.scope('default').findByPk(list.id);
       res.send({ list });
