@@ -33,5 +33,5 @@ export default class OrganizationMember extends Model<OrganizationMember> {
 
   @AllowNull(false)
   @Column(DataType.INTEGER.UNSIGNED)
-  roleId: number;
+  role_id: number;
 }

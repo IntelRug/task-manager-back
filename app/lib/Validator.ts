@@ -59,7 +59,7 @@ const validators = {
   taskGetOne: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
   ],
   taskGetMany: [
     query('ids')
@@ -72,29 +72,29 @@ const validators = {
     body('name')
       .trim()
       .not().isEmpty()
-      .withMessage('Task name can not be empty'),
+      .withMessage('UTask name can not be empty'),
     body('description')
       .optional()
       .trim()
       .not()
       .isEmpty()
-      .withMessage('Task description can not be empty'),
+      .withMessage('UTask description can not be empty'),
   ],
   taskDelete: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
   ],
   taskEdit: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
     body('name')
       .optional()
       .trim()
       .not()
       .isEmpty()
-      .withMessage('Task name can not be empty'),
+      .withMessage('UTask name can not be empty'),
     body('description')
       .optional()
       .trim(),
@@ -102,27 +102,27 @@ const validators = {
       .optional()
       .trim()
       .isNumeric()
-      .withMessage('Task status must be numeric'),
+      .withMessage('UTask status must be numeric'),
     body('deadlineAt')
       .optional()
       .trim()
       .isNumeric()
-      .withMessage('Task status must be numeric'),
+      .withMessage('UTask status must be numeric'),
     body('finishedAt')
       .optional()
       .trim()
       .isNumeric()
-      .withMessage('Task status must be numeric'),
+      .withMessage('UTask status must be numeric'),
   ],
   taskGetExecutors: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
   ],
   taskAddExecutors: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
     body('user_ids')
       .not().isEmpty()
       .isString()
@@ -131,7 +131,7 @@ const validators = {
   taskSetExecutors: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
     body('user_ids')
       .isString()
       .withMessage('user_ids must be string'),
@@ -139,7 +139,7 @@ const validators = {
   taskRemoveExecutors: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
     body('user_ids')
       .not().isEmpty()
       .isString()
@@ -148,7 +148,7 @@ const validators = {
   taskSetStatus: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
     body('status')
       .matches(/[0-4]/)
       .withMessage('The value of the \'status\' field can only be between 0 and 4'),
@@ -156,12 +156,12 @@ const validators = {
   taskFinish: [
     param('taskId')
       .isNumeric()
-      .withMessage('Task id must be numeric'),
+      .withMessage('UTask id must be numeric'),
   ],
   listGetOne: [
     param('listId')
       .isNumeric()
-      .withMessage('List id must be numeric'),
+      .withMessage('UList id must be numeric'),
   ],
   listGetMany: [
     query('ids')
@@ -174,29 +174,29 @@ const validators = {
     body('name')
       .trim()
       .not().isEmpty()
-      .withMessage('List name can not be empty'),
+      .withMessage('UList name can not be empty'),
     body('description')
       .optional()
       .trim()
       .not()
       .isEmpty()
-      .withMessage('List description can not be empty'),
+      .withMessage('UList description can not be empty'),
   ],
   listDelete: [
     param('listId')
       .isNumeric()
-      .withMessage('List id must be numeric'),
+      .withMessage('UList id must be numeric'),
   ],
   listEdit: [
     param('listId')
       .isNumeric()
-      .withMessage('List id must be numeric'),
+      .withMessage('UList id must be numeric'),
     body('name')
       .optional()
       .trim()
       .not()
       .isEmpty()
-      .withMessage('List name can not be empty'),
+      .withMessage('UList name can not be empty'),
   ],
   userGetOne: [
     param('userId')

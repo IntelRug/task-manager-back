@@ -4,19 +4,19 @@ import {
   BelongsToMany,
   Column,
   DataType,
-  Default,
-  HasMany,
+  Default, HasMany,
   Model,
-  PrimaryKey, Scopes,
+  PrimaryKey,
+  Scopes,
   Table,
   Unique,
 } from 'sequelize-typescript';
 import Organization from './Organization';
 import OrganizationMember from './OrganizationMember';
-import TaskExecutor from './TaskExecutor';
-import Task from './Task';
 import UserList from './UserList';
-import List from './List';
+import UList from './UList';
+import OTaskExecutor from './OTaskExecutor';
+import OTask from './OTask';
 
 @Table({
   timestamps: false,
@@ -80,12 +80,9 @@ export default class User extends Model<User> {
   @BelongsToMany(() => Organization, () => OrganizationMember)
   organizations: Organization[];
 
-  @BelongsToMany(() => Task, () => TaskExecutor)
-  tasks: Task[];
+  @BelongsToMany(() => UList, () => UserList)
+  lists: UList[];
 
-  @BelongsToMany(() => List, () => UserList)
-  lists: List[];
-
-  @HasMany(() => TaskExecutor)
-  te: TaskExecutor[];
+  @HasMany(() => OTaskExecutor)
+  te: OTaskExecutor[];
 }

@@ -5,7 +5,7 @@ import User from '../models/User';
 import validate from '../lib/ValidateDecorator';
 import ErrorHelper from '../lib/ErrorHelper';
 import { optArr } from '../lib/DbHelper';
-import List from '../models/List';
+import UList from '../models/UList';
 
 export default class UserController {
   public static async getOne(req, res) {
@@ -66,7 +66,7 @@ export default class UserController {
 
       user = await user.save();
       user = await User.scope('default').findByPk(user.id);
-      await List.createDefaultList(user.id);
+      await UList.createDefaultList(user.id);
       return res.send({ user });
     } catch (e) {
       return ErrorHelper.api(res, e);

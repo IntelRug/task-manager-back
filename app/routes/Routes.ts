@@ -1,7 +1,10 @@
 import * as passport from 'passport';
 import User from '../controllers/User';
-import Task from '../controllers/Task';
+import UTask from '../controllers/UTask';
+import OTask from '../controllers/OTask';
 import List from '../controllers/List';
+import OList from '../controllers/OList';
+import Organization from '../controllers/Organization';
 import Validator from '../lib/Validator';
 import OAuth2 from '../lib/OAuth2';
 
@@ -32,18 +35,47 @@ export default class Routes {
       .put(Validator.listEdit, List.edit);
 
     app.route(`${secure}/tasks`)
-      .get(Validator.taskGetMany, Task.getMany)
-      .post(Validator.taskCreate, Task.create);
+      .get(Validator.taskGetMany, UTask.getMany)
+      .post(Validator.taskCreate, UTask.create);
 
     app.route(`${secure}/tasks/:taskId`)
-      .get(Validator.taskGetOne, Task.getOne)
-      .delete(Validator.taskDelete, Task.delete)
-      .put(Validator.taskEdit, Task.edit);
+      .get(Validator.taskGetOne, UTask.getOne)
+      .delete(Validator.taskDelete, UTask.delete)
+      .put(Validator.taskEdit, UTask.edit);
 
-    app.route(`${secure}/tasks/:taskId/executors`)
-      .get(Validator.taskGetExecutors, Task.getExecutors)
-      .post(Validator.taskSetExecutors, Task.setExecutors)
-      .delete(Validator.taskRemoveExecutors, Task.removeExecutors)
-      .put(Validator.taskAddExecutors, Task.addExecutors);
+    app.route(`${secure}/organizations`)
+      .get(Organization.getMany)
+      .post(Organization.create);
+
+    app.route(`${secure}/organizations/:organizationId`)
+      .get(Organization.getOne)
+      .put(Organization.edit);
+
+    app.route(`${secure}/organizations/:organizationId/lists`)
+      .get(Validator.listGetMany, OList.getMany)
+      .post(Validator.listCreate, OList.create);
+
+    app.route(`${secure}/organizations/:organizationId/lists/:listId`)
+      .get(Validator.listGetOne, OList.getOne)
+      .delete(Validator.listDelete, OList.delete)
+      .put(Validator.listEdit, OList.edit);
+
+    app.route(`${secure}/organizations/:organizationId/tasks`)
+      .get(Validator.taskGetMany, OTask.getMany)
+      .post(Validator.taskCreate, OTask.create);
+
+    app.route(`${secure}/organizations/:organizationId/tasks/:taskId`)
+      .get(Validator.taskGetOne, OTask.getOne)
+      .delete(Validator.taskDelete, OTask.delete)
+      .put(Validator.taskEdit, OTask.edit);
+
+    app.route(`${secure}/organizations/:organizationId/tasks/:taskId/executors`)
+      .get(Validator.taskGetExecutors, OTask.getExecutors)
+      .post(Validator.taskSetExecutors, OTask.setExecutors)
+      .delete(Validator.taskRemoveExecutors, OTask.removeExecutors)
+      .put(Validator.taskAddExecutors, OTask.addExecutors);
+
+    app.route(`${secure}/organizations/:organizationId/members`)
+      .get(Organization.getMembers);
   }
 }

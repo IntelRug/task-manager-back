@@ -8,21 +8,21 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import Task from './Task';
+import OTask from './OTask';
 import User from './User';
 
 @Table({
   timestamps: false,
   underscored: true,
 })
-export default class TaskExecutor extends Model<TaskExecutor> {
+export default class OTaskExecutor extends Model<OTaskExecutor> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id: number;
 
   @AllowNull(false)
-  @ForeignKey(() => Task)
+  @ForeignKey(() => OTask)
   @Column(DataType.BIGINT.UNSIGNED)
   task_id: number;
 

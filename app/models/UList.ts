@@ -10,14 +10,14 @@ import {
 } from 'sequelize-typescript';
 import { FindOptions } from 'sequelize';
 import User from './User';
-import Task from './Task';
+import UTask from './UTask';
 import ErrorCode from '../lib/ErrorCode';
 import UserList from './UserList';
 
 @Scopes(() => ({
   default: {
     include: [{
-      model: Task,
+      model: UTask,
     }],
   },
 }))
@@ -25,7 +25,7 @@ import UserList from './UserList';
   timestamps: false,
   underscored: true,
 })
-export default class List extends Model<List> {
+export default class UList extends Model<UList> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER.UNSIGNED)
@@ -46,8 +46,8 @@ export default class List extends Model<List> {
   }).UNSIGNED)
   created_at: number;
 
-  @HasMany(() => Task)
-  tasks: Task[];
+  @HasMany(() => UTask)
+  tasks: UTask[];
 
   @BelongsToMany(() => User, () => UserList)
   members: User[];
@@ -56,7 +56,7 @@ export default class List extends Model<List> {
   settings: UserList;
 
   static async isAllowed(listId, userId) {
-    const list: List = await List.scope('default').getByPk(userId, listId);
+    const list: UList = await UList.scope('default').getByPk(userId, listId);
     if (!list || list.owner_id !== userId) {
       throw new ErrorCode(2);
     }
@@ -79,7 +79,7 @@ export default class List extends Model<List> {
         },
       }],
     };
-    return List.scope('default').findByPk(pk, options);
+    return UList.scope('default').findByPk(pk, options);
   }
 
   static async getAvailableLists(userId, opts) {
@@ -99,7 +99,7 @@ export default class List extends Model<List> {
       }],
     };
     options = { ...options, ...opts };
-    return List
+    return UList
       .scope('default')
       .findAll(options);
   }
@@ -118,7 +118,7 @@ export default class List extends Model<List> {
   }
 
   static async createDefaultList(userId) {
-    const list: List = await new List({
+    const list: UList = await new UList({
       name: 'Несортированные',
       owner_id: userId,
       created_at: Date.now(),
@@ -128,11 +128,11 @@ export default class List extends Model<List> {
       user_id: userId,
       default: 1,
     }).save();
-    return List.scope('default').getByPk(userId, list.id);
+    return UList.scope('default').getByPk(userId, list.id);
   }
 
   static async createList(userId, name) {
-    const list: List = await new List({
+    const list: UList = await new UList({
       name,
       owner_id: userId,
       created_at: Date.now(),
@@ -141,14 +141,14 @@ export default class List extends Model<List> {
       list_id: list.id,
       user_id: userId,
     }).save();
-    return List.scope('default').getByPk(userId, list.id);
+    return UList.scope('default').getByPk(userId, list.id);
   }
 
   static async deleteList(userId, listId: number, moveTo: number) {
     if (moveTo) {
-      await List.moveTasks(listId, moveTo);
+      await UList.moveTasks(listId, moveTo);
     }
-    await List.destroy({
+    await UList.destroy({
       where: {
         id: listId,
       },
@@ -156,7 +156,7 @@ export default class List extends Model<List> {
   }
 
   static async moveTasks(listId, moveToListId) {
-    return Task.update({
+    return UTask.update({
       list_id: moveToListId,
     }, {
       where: {

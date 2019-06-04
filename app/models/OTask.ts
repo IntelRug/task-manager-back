@@ -8,15 +8,15 @@ import {
   PrimaryKey, Table,
 } from 'sequelize-typescript';
 import User from './User';
-import TaskExecutor from './TaskExecutor';
+import OTaskExecutor from './OTaskExecutor';
 import ErrorCode from '../lib/ErrorCode';
-import List from './List';
+import OList from './OList';
 
 @Table({
   timestamps: false,
   underscored: true,
 })
-export default class Task extends Model<Task> {
+export default class OTask extends Model<OTask> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.BIGINT.UNSIGNED)
@@ -35,7 +35,7 @@ export default class Task extends Model<Task> {
   @Column(DataType.INTEGER.UNSIGNED)
   owner_id: number;
 
-  @ForeignKey(() => List)
+  @ForeignKey(() => OList)
   @AllowNull(false)
   @Column(DataType.INTEGER.UNSIGNED)
   list_id: number;
@@ -79,11 +79,11 @@ export default class Task extends Model<Task> {
   }).UNSIGNED)
   updated_at: number;
 
-  @BelongsToMany(() => User, () => TaskExecutor)
+  @BelongsToMany(() => User, () => OTaskExecutor)
   executors: User[];
 
   static async isAllowed(taskId: number, userId: number) {
-    const task: Task = await Task.getByPk(taskId);
+    const task: OTask = await OTask.getByPk(taskId);
     if (!task || task.owner_id !== userId) {
       throw new ErrorCode(2);
     }
@@ -91,7 +91,7 @@ export default class Task extends Model<Task> {
   }
 
   static async isAllowedToEdit(taskId: number, userId: number) {
-    const task: Task = await Task.getByPk(taskId);
+    const task: OTask = await OTask.getByPk(taskId);
     if (!task || task.owner_id !== userId) {
       throw new ErrorCode(2);
     }
@@ -99,7 +99,7 @@ export default class Task extends Model<Task> {
   }
 
   static async getByPk(taskId) {
-    return Task.findByPk(taskId, {
+    return OTask.findByPk(taskId, {
       include: [{
         model: User.scope('default'),
         through: {
@@ -112,7 +112,7 @@ export default class Task extends Model<Task> {
   static async getExecutors(taskId: number) {
     return User.scope('default').findAndCountAll({
       include: [{
-        model: TaskExecutor,
+        model: OTaskExecutor,
         attributes: [],
         where: {
           task_id: taskId,
@@ -124,7 +124,7 @@ export default class Task extends Model<Task> {
   static async addWithUserIdsArray(taskId: number, userIds: number[], filtered = false) {
     let add: number[] = [];
     if (!filtered) {
-      const { rows: executors } = await Task.getExecutors(taskId);
+      const { rows: executors } = await OTask.getExecutors(taskId);
       const currentExecutors: number[] = executors.map(e => e.id);
       add = userIds.filter(id => !currentExecutors.includes(id));
     } else {
@@ -133,7 +133,7 @@ export default class Task extends Model<Task> {
     await Promise.all(
       add.map(async id => {
         try {
-          await new TaskExecutor({
+          await new OTaskExecutor({
             task_id: taskId,
             executor_id: id,
           }).save();
@@ -145,7 +145,7 @@ export default class Task extends Model<Task> {
   }
 
   static async removeWithUserIdsArray(taskId: number, userIds: number[]) {
-    await TaskExecutor.destroy({
+    await OTaskExecutor.destroy({
       where: {
         task_id: taskId,
         executor_id: userIds,
@@ -154,13 +154,13 @@ export default class Task extends Model<Task> {
   }
 
   static async setWithUserIdsArray(taskId: number, userIds: number[]) {
-    const { rows: executors } = await Task.getExecutors(taskId);
+    const { rows: executors } = await OTask.getExecutors(taskId);
     const currentExecutors: number[] = executors.map(e => e.id);
     const add: number[] = userIds.filter(id => !currentExecutors.includes(id));
     const remove: number[] = currentExecutors.filter(id => !userIds.includes(id));
     await Promise.all([
-      Task.removeWithUserIdsArray(taskId, remove),
-      Task.addWithUserIdsArray(taskId, add, true),
+      OTask.removeWithUserIdsArray(taskId, remove),
+      OTask.addWithUserIdsArray(taskId, add, true),
     ]);
   }
 

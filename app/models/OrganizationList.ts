@@ -8,28 +8,28 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import UList from './UList';
-import User from './User';
+import OList from './OList';
+import Organization from './Organization';
 
 @Table({
   timestamps: false,
   underscored: true,
 })
-export default class UserList extends Model<UserList> {
+export default class OrganizationList extends Model<OrganizationList> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER.UNSIGNED)
   id: number;
 
   @AllowNull(false)
-  @ForeignKey(() => UList)
+  @ForeignKey(() => OList)
   @Column(DataType.INTEGER.UNSIGNED)
   list_id: number;
 
   @AllowNull(false)
-  @ForeignKey(() => User)
+  @ForeignKey(() => Organization)
   @Column(DataType.INTEGER.UNSIGNED)
-  user_id: number;
+  organization_id: number;
 
   @AllowNull(false)
   @Default(0)
@@ -37,11 +37,4 @@ export default class UserList extends Model<UserList> {
     length: 1,
   }).UNSIGNED)
   default: number;
-
-  @AllowNull(false)
-  @Default(0)
-  @Column(DataType.TINYINT({
-    length: 1,
-  }).UNSIGNED)
-  is_owner: number;
 }
