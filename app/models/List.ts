@@ -3,9 +3,9 @@ import {
   AutoIncrement, BelongsToMany,
   Column,
   DataType,
-  ForeignKey, HasMany,
+  ForeignKey, HasMany, HasOne,
   Model,
-  PrimaryKey, Scopes, Sequelize,
+  PrimaryKey, Scopes,
   Table,
 } from 'sequelize-typescript';
 import { FindOptions } from 'sequelize';
@@ -52,15 +52,34 @@ export default class List extends Model<List> {
   @BelongsToMany(() => User, () => UserList)
   members: User[];
 
-  @HasMany(() => UserList)
+  @HasOne(() => UserList)
   settings: UserList;
 
-  static async isAllowed(taskId, userId) {
-    const list: List = await List.findByPk(taskId);
+  static async isAllowed(listId, userId) {
+    const list: List = await List.scope('default').getByPk(userId, listId);
     if (!list || list.owner_id !== userId) {
       throw new ErrorCode(2);
     }
     return list;
+  }
+
+  static async getByPk(userId, pk: number) {
+    const options: FindOptions = {
+      include: [{
+        model: UserList,
+        attributes: {
+          exclude: [
+            'id',
+            'user_id',
+            'list_id',
+          ],
+        },
+        where: {
+          user_id: userId,
+        },
+      }],
+    };
+    return List.scope('default').findByPk(pk, options);
   }
 
   static async getAvailableLists(userId, opts) {
@@ -80,13 +99,9 @@ export default class List extends Model<List> {
       }],
     };
     options = { ...options, ...opts };
-    const lists = await List
+    return List
       .scope('default')
       .findAll(options);
-
-    return lists.map(list => (
-      { ...list.toJSON(), settings: list.settings[0].toJSON() }
-    ));
   }
 
   static async getDefaultList(userId) {
@@ -113,7 +128,31 @@ export default class List extends Model<List> {
       user_id: userId,
       default: 1,
     }).save();
-    return list;
+    return List.scope('default').getByPk(userId, list.id);
+  }
+
+  static async createList(userId, name) {
+    const list: List = await new List({
+      name,
+      owner_id: userId,
+      created_at: Date.now(),
+    }).save();
+    await new UserList({
+      list_id: list.id,
+      user_id: userId,
+    }).save();
+    return List.scope('default').getByPk(userId, list.id);
+  }
+
+  static async deleteList(userId, listId: number, moveTo: number) {
+    if (moveTo) {
+      await List.moveTasks(listId, moveTo);
+    }
+    await List.destroy({
+      where: {
+        id: listId,
+      },
+    });
   }
 
   static async moveTasks(listId, moveToListId) {
