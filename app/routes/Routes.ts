@@ -76,6 +76,11 @@ export default class Routes {
       .put(Validator.taskAddExecutors, OTask.addExecutors);
 
     app.route(`${secure}/organizations/:organizationId/members`)
-      .get(Organization.getMembers);
+      .get(Organization.getMembers)
+      .put(Organization.addMembers)
+      .delete(Organization.removeMembers);
+
+    app.route(`${secure}/organizations/:organizationId/members/role`)
+      .put(Organization.setRoles);
   }
 }

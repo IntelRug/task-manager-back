@@ -5,5 +5,5 @@ export function optInt(field: any) {
 }
 
 export function optArr(field: any) {
-  return field ? field.split(',') : { [Op.not]: null };
+  return field ? String(field).split(',') : { [Op.not]: null };
 }

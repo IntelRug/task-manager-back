@@ -31,7 +31,7 @@ server.exchange(oauth2orize.exchange.password(
         user_id: user.id,
         created_at: Date.now(),
       }).save();
-      return done(null, accessToken.token, false, { expires_in: accessToken.expires_in });
+      return done(null, accessToken.token, false, { expires_in: accessToken.expires_in, user_id: user.id });
     } catch (e) {
       return done(e);
     }
