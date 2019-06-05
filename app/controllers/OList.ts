@@ -3,6 +3,8 @@ import validate from '../lib/ValidateDecorator';
 import ErrorHelper from '../lib/ErrorHelper';
 import { optArr } from '../lib/DbHelper';
 import OList from '../models/OList';
+import Organization from "../models/Organization";
+import ErrorCode from "../lib/ErrorCode";
 
 export default class ListController {
   @validate
@@ -35,7 +37,10 @@ export default class ListController {
   @validate
   public static async create(req, res) {
     try {
-      const list = await OList.createList(req.user.id, req.body.name);
+      if (!await Organization.isModerator(req.params.organizationId, req.user.id)) {
+        throw new ErrorCode(2);
+      }
+      const list = await OList.createList(req.params.organizationId, req.body.name);
       res.send({ list });
     } catch (e) {
       ErrorHelper.api(res, e);
